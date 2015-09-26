@@ -34,6 +34,7 @@ var EventHandlers = {
     stop_onclick : function() {
         EventHandlers.set_start_button();
         Display.clear();
+        Display.stop();
     }
 }
 
@@ -49,15 +50,28 @@ var Display = {
         this.clear();
     },
 
+    // Main event loop
+    main_loop: function() {
+        Display.context.fillStyle = "#fff";
+        Display.context.fillRect(100, Display.i, 100, 100);
+        Display.i += 5;
+    },
+
     // Start the simulation
     start : function() {
         this.clear();
-        this.context.fillStyle("#fff");
-        this.context.fillRect(100, 100, 100, 100);
+        this.timer = setInterval(Display.main_loop, 10);
+    },
+
+    // Stop the simulation
+    stop : function() {
+        clearInterval(this.timer);
     },
 
     // Clear canvas
     clear : function() {
+        this.i = 0;
+        this.context.fillStyle = "#000";
         this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     }
 }
