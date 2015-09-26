@@ -46,10 +46,10 @@ var EventHandlers = {
 var Midi = {
     //setup midi player
     init : function() {
-        var player = MIDI;
-        player.Player.loadFile("js/1080-c01.mid", function() {
-            player.start();
+        MIDI.Player.loadFile("1080-c01.mid", function() {
+            console.log("a");
         });
+        MIDI.Player.start();
     }
 }
 
