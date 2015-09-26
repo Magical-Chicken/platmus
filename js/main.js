@@ -86,6 +86,7 @@ var Display = {
 
     // Main event loop
     main_loop: function() {
+        Display.clear();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.x, Player.y, 25, 25);
     },
@@ -93,7 +94,7 @@ var Display = {
     // Start the simulation
     start : function() {
         this.clear();
-        this.timer = setInterval(Display.main_loop, 10);
+        this.timer = setInterval(Display.main_loop, 2);
     },
 
     // Stop the simulation
