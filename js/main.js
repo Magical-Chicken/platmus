@@ -68,6 +68,10 @@ var Player = {
     }
 }
 
+var Midi = {
+    
+}
+
 var Display = {
     // Set up simulation
     init : function() {
