@@ -1,0 +1,21 @@
+body {
+    background-color: #aaa;
+    height: 100%;
+    width: auto;
+}
+
+div#titlebar {
+    text-align: center;
+    height: 100px;
+}
+
+div#controls {
+    position: relative;
+    bottom: 0px;
+    height: 50px;
+}
+
+canvas {
+    background-color: #fff;
+    margin-left: 25px;
+}
