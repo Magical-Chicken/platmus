@@ -4,6 +4,11 @@ var EventHandlers = {
         // Element IDs
         this.start_button = document.getElementById("start_button");
 
+        // Set key handler
+        document.onkeydown = function(event) {
+            Player.update_position(String.fromCharCode(event.keyCode));
+        }
+
         // Set onclicks
         EventHandlers.set_start_button();
     },
@@ -43,6 +48,23 @@ var Player = {
     init : function() {
         this.x = 10;
         this.y = 10;
+    },
+
+    // Update position
+    update_position : function(keycode) {
+        switch (keycode) {
+            case "J":
+                this.y += 2;
+                break;
+            case "K":
+                this.y -= 2;
+                break;
+            case "H":
+                this.x -=2;
+                break;
+            case "L":
+                this.x +=2;
+        }
     }
 }
 
