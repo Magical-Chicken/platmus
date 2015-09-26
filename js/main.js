@@ -4,9 +4,46 @@ var EventHandlers = {
         // Element IDs
         this.start_button = document.getElementById("start_button");
 
-        // Set key handler
+        // Pressed keys
+        this.keys = {
+            "up": false,
+            "down": false,
+            "left": false,
+            "right": false
+        };
+
+        // Set key handlers
         document.onkeydown = function(event) {
-            Player.update_position(String.fromCharCode(event.keyCode));
+            switch (String.fromCharCode(event.keyCode)) {
+                case "K":
+                    EventHandlers.keys["up"] = true;
+                    break;
+                case "J":
+                    EventHandlers.keys["down"] = true;
+                    break;
+                case "H":
+                    EventHandlers.keys["left"] = true;
+                    break;
+                case "L":
+                    EventHandlers.keys["right"] = true;
+                    break;
+            }
+        }
+        document.onkeyup = function(event) {
+            switch (String.fromCharCode(event.keyCode)) {
+                case "K":
+                    EventHandlers.keys["up"] = false;
+                    break;
+                case "J":
+                    EventHandlers.keys["down"] = false;
+                    break;
+                case "H":
+                    EventHandlers.keys["left"] = false;
+                    break;
+                case "L":
+                    EventHandlers.keys["right"] = false;
+                    break;
+            }
         }
 
         // Set onclicks
@@ -61,20 +98,15 @@ var Player = {
     },
 
     // Update position
-    update_position : function(keycode) {
-        switch (keycode) {
-            case "J":
-                this.y += 2;
-                break;
-            case "K":
-                this.y -= 2;
-                break;
-            case "H":
-                this.x -=2;
-                break;
-            case "L":
-                this.x +=2;
-        }
+    update_position : function() {
+        if (EventHandlers.keys["down"])
+            this.y += 2;
+        if (EventHandlers.keys["up"])
+            this.y -= 2;
+        if (EventHandlers.keys["left"])
+            this.x -= 2;
+        if (EventHandlers.keys["right"])
+            this.x += 2;
     }
 }
 
@@ -100,19 +132,21 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
+        Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.x, Player.y, 25, 25);
+        Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
     // Start the simulation
     start : function() {
         this.clear();
-        this.timer = setInterval(Display.main_loop, 2);
+        this.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
     // Stop the simulation
     stop : function() {
-        clearInterval(this.timer);
+        window.cancelAnimationFrame(this.timer);
     },
 
     // Clear canvas
