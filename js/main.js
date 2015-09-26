@@ -43,6 +43,16 @@ var EventHandlers = {
     }
 }
 
+var Midi = {
+    //setup midi player
+    init : function() {
+        var player = MIDI;
+        player.Player.loadFile("js/1080-c01.mid", function() {
+            player.start();
+        });
+    }
+}
+
 var Player = {
     // Set up player
     init : function() {
@@ -68,10 +78,6 @@ var Player = {
     }
 }
 
-var Midi = {
-    
-}
-
 var Display = {
     // Set up simulation
     init : function() {
@@ -83,6 +89,9 @@ var Display = {
 
         // Set up player
         Player.init();
+
+        //Set up midi
+        Midi.init();
 
         // Clear canvas
         this.clear();
