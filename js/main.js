@@ -33,6 +33,7 @@ var EventHandlers = {
     // Call to stop simulation
     stop_onclick : function() {
         EventHandlers.set_start_button();
+        Display.clear();
     }
 }
 
@@ -43,14 +44,20 @@ var Display = {
         this.context = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth - 60;
         this.canvas.height = window.innerHeight - 200;
+        
+        // Clear canvas
+        this.clear();
     },
 
     // Start the simulation
     start : function() {
+        this.clear();
+        this.context.fillStyle("#fff");
         this.context.fillRect(100, 100, 100, 100);
     },
 
     // Clear canvas
     clear : function() {
+        this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     }
 }
