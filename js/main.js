@@ -89,17 +89,18 @@ var Display = {
         Display.clear();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.x, Player.y, 25, 25);
+        Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
     // Start the simulation
     start : function() {
         this.clear();
-        this.timer = setInterval(Display.main_loop, 2);
+        this.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
     // Stop the simulation
     stop : function() {
-        clearInterval(this.timer);
+        window.cancelAnimationFrame(this.timer);
     },
 
     // Clear canvas
