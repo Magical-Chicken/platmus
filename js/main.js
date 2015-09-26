@@ -38,14 +38,26 @@ var EventHandlers = {
     }
 }
 
+var Player = {
+    // Set up player
+    init : function() {
+        this.x = 10;
+        this.y = 10;
+    }
+}
+
 var Display = {
     // Set up simulation
     init : function() {
+        // Set up canvas
         this.canvas = document.getElementById("main_canvas");
         this.context = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth - 60;
         this.canvas.height = window.innerHeight - 200;
-        
+
+        // Set up player
+        Player.init();
+
         // Clear canvas
         this.clear();
     },
@@ -53,8 +65,7 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.context.fillStyle = "#fff";
-        Display.context.fillRect(100, Display.i, 100, 100);
-        Display.i += 5;
+        Display.context.fillRect(Player.x, Player.y, 25, 25);
     },
 
     // Start the simulation
