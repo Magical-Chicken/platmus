@@ -1,5 +1,6 @@
 body {
     margin: 0px;
+    color: #fff;
 }
 
 div#controls {
@@ -7,6 +8,14 @@ div#controls {
     top: 0px;
     left: 0px;
     height: 50px;
+}
+
+div#shred_div {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 120px;
 }
 
 canvas {
