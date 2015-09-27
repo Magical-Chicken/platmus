@@ -5,7 +5,8 @@ var EventHandlers = {
         this.start_button = document.getElementById("start_button");
         this.loading_sign = document.getElementById("loading_sign");
         this.midiselectionator = document.getElementById("midi_selectionator");
-        this.background = document.body;
+        this.perlman_switch = document.getElementById("perlman_switch");
+        this.shred_div = document.getElementById("perlman");
 
         this.cursor = {
             x: 0, 
@@ -19,6 +20,15 @@ var EventHandlers = {
         // Set up inputs
         this.set_start_button();
         this.set_up_chooser();
+        this.perlman_switch.onclick = this.set_perlman;
+    },
+
+    // set up progress bar
+    set_perlman : function() {
+        if (EventHandlers.shred_div.style.display == "none")
+            EventHandlers.shred_div.style.display = "block";
+        else
+            EventHandlers.shred_div.style.display = "none";
     },
 
     // Make the start button into a start button
@@ -64,7 +74,7 @@ var EventHandlers = {
 
     set_up_chooser : function() {
         var options = "<option>Choose</option>";
-        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid"];
+        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid", "entertainer.mid", "mman.mid", "water.mid", "castle.mid"];
         for (i in songs_array) {
             options += "<option>" + songs_array[i] + "</option>";
         }
@@ -162,14 +172,10 @@ var Player = {
     // Set up player
     init : function() {
         this.rect = new Rect(10, 10, 25, 25);
-        //this.dx = 0;
-        //this.dy = 0;
     },
 
     // Update position
     update_position : function() {
-        //this.rect.x += this.dx;
-        //this.rect.y += this.dy;
         this.rect.x = EventHandlers.cursor.x;
         this.rect.y = EventHandlers.cursor.y;
     }
@@ -202,8 +208,9 @@ var Shredness = {
         this.show();
     },
     show : function() {
-        if (this.shred > 500)
-            this.span.innerHTML = "SHRED LEVEL: " + this.shred + "SHREDDED";
+        if (this.shred > 5000)
+            this.span.innerHTML = "SHRED LEVEL: " + this.shred +
+                " SHREDDED";
         else
             this.span.innerHTML = "SHRED LEVEL: " + this.shred;
     }
