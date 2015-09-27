@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Platform Music</title>
+    <link rel="stylesheet" href="main.css" type="text/css">
+    <script src="midi/MIDI.js"></script>
+    <script src="midi/audioDetect.js"></script>
+    <script src="midi/gm.js"></script>
+    <script src="midi/loader.js"></script>
+    <script src="midi/player.js"></script>
+    <script src="midi/plugin.audiotag.js"></script>
+    <script src="midi/plugin.webaudio.js"></script>
+    <script src="midi/plugin.webmidi.js"></script>
+    <script src="midi/synesthesia.js"></script>
+    <script src="midi/synesthesia.js"></script>
+    <script src="midi/Base64.js"></script>
+    <script src="midi/Base64binary.js"></script>
+    <script src="midi/WebAudioAPI.js"></script>
+    <script src="midi/WebMIDIAPI.js"></script>
+    <script src="midi/dom_request_xhr.js"></script>
+    <script src="midi/dom_request_script.js"></script>
+    <script src="midi/midifile.js"></script>
+    <script src="midi/replayer.js"></script>
+    <script src="midi/stream.js"></script>
+    <script src="../main.js"></script>
+</head>
+<body>
+    <div id="titlebar">
+        <h1>Platform Music</h1>
+        By Wesley Wiedenmeier
+    </div>
+    <canvas id="main_canvas"></canvas>
+    <div id="controls">
+        <b>Controls:</b>
+        <button id="start_button"></button>
+        <b id="loading_sign"></b>
+    </div>
+    <script type="text/javascript">
+        EventHandlers.init();
+        Display.init();
+    </script>
+</body>
+</html>

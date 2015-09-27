@@ -3,6 +3,7 @@ var EventHandlers = {
     init : function() {
         // Element IDs
         this.start_button = document.getElementById("start_button");
+        this.loading_sign = document.getElementById("loading_sign");
 
         // Pressed keys
         this.keys = {
@@ -28,7 +29,8 @@ var EventHandlers = {
                     EventHandlers.keys["right"] = true;
                     break;
             }
-        }
+        };
+
         document.onkeyup = function(event) {
             switch (String.fromCharCode(event.keyCode)) {
                 case "K":
@@ -44,10 +46,10 @@ var EventHandlers = {
                     EventHandlers.keys["right"] = false;
                     break;
             }
-        }
+        };
 
-        // Set onclicks
-        EventHandlers.set_start_button();
+        // Set up buttons
+        this.set_start_button();
     },
 
     // Make the start button into a start button
@@ -56,6 +58,18 @@ var EventHandlers = {
         this.start_button.innerHTML = "Start";
         // Set button onclick
         this.start_button.onclick = EventHandlers.start_onclick;
+    },
+
+    // Make the start button disabled
+    disable_start_button : function() {
+        this.start_button.disabled = true;
+        this.loading_sign.innerHTML = "LOADING THE FILE";
+    },
+
+    // Make the start button enabled
+    enable_start_button : function() {
+        this.start_button.disabled = false;
+        this.loading_sign.innerHTML = "";
     },
 
     // Make the start button into a stop button
@@ -83,6 +97,41 @@ var EventHandlers = {
         for (i in this.keys) {
             if(this.keys[i]) return this.keys[i]; }
         return false;
+    }
+}
+
+var Midi = {
+    //setup midi player
+    init : function() {
+        EventHandlers.disable_start_button();
+        MIDI.loadPlugin({
+            soundfontUrl: "soundfonts/",
+            instrument: "acoustic_grand_piano",
+            onsuccess: function() {
+                MIDI.Player.loadFile("songs/song.mid", function() {
+                    EventHandlers.enable_start_button();
+                    console.log("hi");
+                },
+                function(progress) {
+                    console.log(progress);
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }
+        });
+    },
+
+    // Start dis up
+    start : function() {
+        console.log("bueno");
+        MIDI.Player.start();
+    },
+
+    // Nooooooo
+    stop : function() {
+        console.log("nah");
+        MIDI.Player.stop();
     }
 }
 
@@ -142,6 +191,9 @@ var Display = {
         // Set up player
         Player.init();
 
+        //Set up midi
+        Midi.init();
+
         // Clear canvas
         this.clear();
     },
@@ -171,6 +223,7 @@ var Display = {
 
     // Start the simulation
     start : function() {
+        Midi.start();
         this.clear();
         this.timer = window.requestAnimationFrame(Display.main_loop);
     },
@@ -178,6 +231,7 @@ var Display = {
     // Stop the simulation
     stop : function() {
         window.cancelAnimationFrame(this.timer);
+        Midi.stop();
         Player.init();
     },
 
@@ -185,6 +239,7 @@ var Display = {
     clear : function() {
         this.i = 0;
         this.context.fillStyle = "#000";
-        this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+        this.context.fillRect(0, 0, this.context.canvas.width,
+                this.context.canvas.height);
     }
 }
