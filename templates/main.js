@@ -21,6 +21,9 @@ var EventHandlers = {
         this.set_start_button();
         this.set_up_chooser();
         this.perlman_switch.onclick = this.set_perlman;
+
+        // Set perlman off
+        this.shred_div.style.display = "none";
     },
 
     // set up progress bar
