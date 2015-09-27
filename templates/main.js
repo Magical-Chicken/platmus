@@ -194,8 +194,8 @@ var Shredness = {
             {
                 type: "Overdrive",
                 outputGain: 0.5,
-                drive: 0.7,
-                curveAmount: 1,
+                drive: 0.3,
+                curveAmount: 0.6,
                 algorithmIndex: 0,
                 bypass: 0
             }
