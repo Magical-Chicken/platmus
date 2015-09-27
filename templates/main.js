@@ -3,6 +3,7 @@ var EventHandlers = {
     init : function() {
         // Element IDs
         this.start_button = document.getElementById("start_button");
+        this.loading_sign = document.getElementById("loading_sign");
 
         // Pressed keys
         this.keys = {
@@ -28,7 +29,8 @@ var EventHandlers = {
                     EventHandlers.keys["right"] = true;
                     break;
             }
-        }
+        };
+
         document.onkeyup = function(event) {
             switch (String.fromCharCode(event.keyCode)) {
                 case "K":
@@ -44,10 +46,10 @@ var EventHandlers = {
                     EventHandlers.keys["right"] = false;
                     break;
             }
-        }
+        };
 
-        // Set onclicks
-        EventHandlers.set_start_button();
+        // Set up buttons
+        this.set_start_button();
     },
 
     // Make the start button into a start button
@@ -56,6 +58,18 @@ var EventHandlers = {
         this.start_button.innerHTML = "Start";
         // Set button onclick
         this.start_button.onclick = EventHandlers.start_onclick;
+    },
+
+    // Make the start button disabled
+    disable_start_button : function() {
+        this.start_button.disabled = true;
+        this.loading_sign.innerHTML = "LOADING THE FILE";
+    },
+
+    // Make the start button enabled
+    enable_start_button : function() {
+        this.start_button.disabled = false;
+        this.loading_sign.innerHTML = "";
     },
 
     // Make the start button into a stop button
@@ -85,11 +99,17 @@ var Midi = {
     init : function() {
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
-            instrument: "accoustic_grand_piano",
+            instrument: "acoustic_grand_piano",
             onsuccess: function() {
-                MIDI.Player.loadFile({{ encsong }}, function() {
+                MIDI.Player.loadFile("songs/song.mid", function() {
                     console.log("hi");
-                    MIDI.Player.play();
+                    MIDI.Player.start();
+                },
+                function(progress) {
+                    console.log(progress);
+                },
+                function(error) {
+                    console.log(error);
                 });
             }
         });
