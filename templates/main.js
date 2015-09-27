@@ -132,6 +132,12 @@ var Midi = {
     stop : function() {
         console.log("nah");
         MIDI.Player.stop();
+    },
+
+    // Shred it up
+    shred : function() {
+        MIDI.noteOn(0, 60, 127, 0);
+        MIDI.noteOn(0, 70, 127, 0);
     }
 }
 
@@ -150,23 +156,30 @@ var Player = {
     }
 }
 
+var Shredness = {
+    // Set up
+    init : function() {
+        this.shreddedness = 0;
+    },
+
+    collide : function() {
+        this.shreddedness += 10;
+        Midi.shred();
+    }
+}
+
 var Collision = {
     // Set up collision
     init : function() {
     },
 
     update_collision(player, note) {
-        
         //checks if player is above note
-        if(player.x + player.width / 2 > note.x - note.width / 2 
+        if (player.x + player.width / 2 > note.x - note.width / 2 
                 && player.x - player.width / 2 < note.x + note.width / 2)
-            if(player.y + player.height / 2 > note.y - note.height / 2
+            if (player.y + player.height / 2 > note.y - note.height / 2
                     && player.y - player.height / 2 < note.y + note.height / 2)
-                console.log("collision true");
-            else
-                console.log("collision false");
-        else
-            console.log("collision false");
+                Shredness.collide();
     }
         
 
@@ -216,7 +229,8 @@ var Display = {
         Collision.update_collision(Player.rect, new Rect(50, 50, 25,25));
         Player.update_position();
         Display.context.fillStyle = "#fff";
-        Display.context.fillRect(Player.rect.x, Player.rect.y, Player.rect.width, Player.rect.height);
+        Display.context.fillRect(Player.rect.x, Player.rect.y,
+                Player.rect.width, Player.rect.height);
         Display.context.fillRect(50, 50, 25, 25);
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
