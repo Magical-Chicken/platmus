@@ -245,12 +245,6 @@ var Collision = {
     }
 }
 
-var MousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    x: evt.clientX - rect.left,
-    this.y: evt.clientY - rect.top
-}
-
 var Notes = {
     init : function() {
         this.current = []; 
