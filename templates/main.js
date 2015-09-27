@@ -157,6 +157,7 @@ var Midi = {
         console.log("bueno");
         this.playing = true;
         MIDI.Player.start();
+        MIDI.Player.addListener(Midi.update);
     },
 
     // Nooooooo
@@ -170,6 +171,25 @@ var Midi = {
     shred : function() {
         MIDI.noteOn(0, 60, 127, 0);
         MIDI.noteOn(0, 70, 127, 0);
+        MIDI.Player.removeListener();
+    },
+
+    update : function(data) {
+        //console.log(data);
+        Midi.note = data.note;
+        Midi.message = data.message;
+        if(Midi.message == 144) {
+            var r = new Rect(Display.canvas.width - 50, (Display.canvas.height - (Midi.note * 5)), 500, 5)
+            Notes.current[Midi.note] = r;
+            Rectangles.rectangles.push(r);
+        }
+        else {
+            if(Notes.current[Midi.note]) {
+                var r = Notes.current[Midi.note];
+                r.width = Display.canvas.width - r.x;
+                Notes.current[Midi.note] = null;
+            }
+        }
     }
 }
 
@@ -218,6 +238,46 @@ var Collision = {
     }
 }
 
+var Notes = {
+    init : function() {
+        this.current = []; 
+    }
+}
+
+var Rectangles = {
+    init : function() {
+        this.rectangles = [];
+    },
+    update : function() {
+        var notfinished = true;
+        while(notfinished) {
+            notfinished = false;
+            for (i in this.rectangles) {
+                var r = this.rectangles[i]
+                if(r.x < -1 * r.width) {
+                    this.rectangles.splice(i, i + 1);
+                    notfinished = true;
+                    break;
+                }
+                else r.x += -1;
+            }
+        }
+    },
+    draw : function() {
+        for (i in this.rectangles) {
+            if(this.rectangles[i]) {
+                var r = this.rectangles[i];
+                Display.context.fillRect(r.x, r.y, r.width, r.height);
+            }
+        }
+    },
+    check_collisions : function() {
+        for (i in this.rectangles) {
+            Collision.update_collision(Player.rect, this.rectangles[i]);
+        }
+    }
+}
+
 function Rect(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -243,6 +303,12 @@ var Display = {
         // Shred some stuff
         Shredness.init();
 
+        //Set up rects
+        Rectangles.init();
+
+        //Set up current notes
+        Notes.init();
+
         // Clear canvas
         this.clear();
     },
@@ -262,12 +328,13 @@ var Display = {
             Player.dx = 0;
             Player.dy = 0;
         }
-        Collision.update_collision(Player.rect, new Rect(50, 50, 25,25));
         Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
                 Player.rect.width, Player.rect.height);
-        Display.context.fillRect(50, 50, 25, 25);
+        Rectangles.update();
+        Rectangles.check_collisions();
+        Rectangles.draw();
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
@@ -284,6 +351,7 @@ var Display = {
         Midi.stop();
         Player.init();
         Shredness.init();
+        Rectangles.rectangles = [];
     },
 
     // Clear canvas
