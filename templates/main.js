@@ -77,7 +77,7 @@ var EventHandlers = {
 
     set_up_chooser : function() {
         var options = "<option>Choose</option>";
-        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid", "entertainer.mid", "mman.mid", "water.mid", "castle.mid", "littleroot.mid", "verdanturf.mid", "lilycove.mid", "surfing.mid"];
+        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid", "entertainer.mid", "mman.mid", "water.mid", "castle.mid"];
         for (i in songs_array) {
             options += "<option>" + songs_array[i] + "</option>";
         }
