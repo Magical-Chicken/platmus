@@ -97,13 +97,14 @@ var EventHandlers = {
 var Midi = {
     //setup midi player
     init : function() {
+        EventHandlers.disable_start_button();
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
             instrument: "acoustic_grand_piano",
             onsuccess: function() {
                 MIDI.Player.loadFile("songs/song.mid", function() {
+                    EventHandlers.enable_start_button();
                     console.log("hi");
-                    MIDI.Player.start();
                 },
                 function(progress) {
                     console.log(progress);
@@ -113,6 +114,18 @@ var Midi = {
                 });
             }
         });
+    },
+
+    // Start dis up
+    start : function() {
+        console.log("bueno");
+        MIDI.Player.start();
+    },
+
+    // Nooooooo
+    stop : function() {
+        console.log("nah");
+        MIDI.Player.stop();
     }
 }
 
@@ -166,6 +179,7 @@ var Display = {
 
     // Start the simulation
     start : function() {
+        Midi.start();
         this.clear();
         this.timer = window.requestAnimationFrame(Display.main_loop);
     },
@@ -173,6 +187,7 @@ var Display = {
     // Stop the simulation
     stop : function() {
         window.cancelAnimationFrame(this.timer);
+        Midi.stop();
     },
 
     // Clear canvas
