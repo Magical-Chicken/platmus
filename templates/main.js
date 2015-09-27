@@ -245,6 +245,12 @@ var Collision = {
     }
 }
 
+var MousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    x: evt.clientX - rect.left,
+    this.y: evt.clientY - rect.top
+}
+
 var Notes = {
     init : function() {
         this.current = []; 
@@ -324,7 +330,7 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
-        if (EventHandlers.keys["down"])
+        /*if (EventHandlers.keys["down"])
             Player.dy += 1;
         if (EventHandlers.keys["up"])
             Player.dy += -1;
@@ -335,16 +341,13 @@ var Display = {
         if (!EventHandlers.key_down()) {
             Player.dx = 0;
             Player.dy = 0;
-        }
+        }*/
+
         Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
-                Player.rect.width, Player.rect.height);
-<<<<<<< HEAD
-        
-=======
+        Player.rect.width, Player.rect.height);
         PerlmanProgress.update();
->>>>>>> origin/master
         Rectangles.update();
         Rectangles.update_position();
         Rectangles.check_collisions();

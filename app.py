@@ -7,4 +7,4 @@ def thingy():
     return render_template("main.js")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
