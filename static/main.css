@@ -19,8 +19,3 @@ canvas {
     background-color: #fff;
     margin-left: 25px;
 }
-
-img#shreddedness_bar {
-    width: 0px;
-    height: 100px;
-}

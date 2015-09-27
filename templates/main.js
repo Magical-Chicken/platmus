@@ -163,15 +163,12 @@ var Midi = {
     // Nooooooo
     stop : function() {
         console.log("nah");
-        this.playing = false;
+        MIDI.Player.removeListener();
         MIDI.Player.stop();
     },
 
     // Shred it up
     shred : function() {
-        MIDI.noteOn(0, 60, 127, 0);
-        MIDI.noteOn(0, 70, 127, 0);
-        MIDI.Player.removeListener();
     },
 
     update : function(data) {
@@ -211,30 +208,34 @@ var Player = {
 var Shredness = {
     // Set up
     init : function() {
-        this.shreddedness = 10;
         this.perlman = document.getElementById("shreddedness_bar");
-        this.perlman.width = this.shreddedness;
+        this.perlman.height = 100;
+        this.perlman.width = 0;
+        this.collided_with = []
     },
 
-    collide : function() {
-        this.shreddedness += 50;
-        this.perlman.width = this.shreddedness;
-        Midi.shred();
+    collide : function(note) {
+        if (this.collided_with.indexOf(note) < 0) {
+            this.collided_with.push(note);
+            if (this.perlman.width < window.innerWidth)
+                this.perlman.width += 5;
+            else if (this.perlman.height < window.innerHeight)
+                this.perlman.height += 5;
+            else
+                EventHandlers.lose();
+            Midi.shred();
+        }
     }
 }
 
 var Collision = {
-    // Set up collision
-    init : function() {
-    },
-
     update_collision(player, note) {
         //checks if player is above note
         if (player.x + player.width / 2 > note.x - note.width / 2 
                 && player.x - player.width / 2 < note.x + note.width / 2)
             if (player.y + player.height / 2 > note.y - note.height / 2
                     && player.y - player.height / 2 < note.y + note.height / 2)
-                Shredness.collide();
+                Shredness.collide(note);
     }
 }
 
@@ -340,6 +341,7 @@ var Display = {
 
     // Start the simulation
     start : function() {
+        Shredness.init();
         Midi.start();
         this.clear();
         this.timer = window.requestAnimationFrame(Display.main_loop);
@@ -350,7 +352,6 @@ var Display = {
         window.cancelAnimationFrame(this.timer);
         Midi.stop();
         Player.init();
-        Shredness.init();
         Rectangles.rectangles = [];
     },
 
