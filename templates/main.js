@@ -5,59 +5,15 @@ var EventHandlers = {
         this.start_button = document.getElementById("start_button");
         this.loading_sign = document.getElementById("loading_sign");
         this.midiselectionator = document.getElementById("midi_selectionator");
-
-        // Pressed keys
-        this.keys = {
-            "up": false,
-            "down": false,
-            "left": false,
-            "right": false
-        };
-
-        // Set key handlers
-        document.onkeydown = function(event) {
-            switch (String.fromCharCode(event.keyCode)) {
-                case "K":
-                    EventHandlers.keys["up"] = true;
-                    break;
-                case "J":
-                    EventHandlers.keys["down"] = true;
-                    break;
-                case "H":
-                    EventHandlers.keys["left"] = true;
-                    break;
-                case "L":
-                    EventHandlers.keys["right"] = true;
-                    break;
-            }
-        };
-
-        document.onkeyup = function(event) {
-            switch (String.fromCharCode(event.keyCode)) {
-                case "K":
-                    EventHandlers.keys["up"] = false;
-                    break;
-                case "J":
-                    EventHandlers.keys["down"] = false;
-                    break;
-                case "H":
-                    EventHandlers.keys["left"] = false;
-                    break;
-                case "L":
-                    EventHandlers.keys["right"] = false;
-                    break;
-            }
-        };
+        this.background = document.body;
 
         this.cursor = {
             x: 0, 
             y: 0
-        }
+        };
 
         window.onmousemove = function(e) {
             EventHandlers.cursor = MousePos(Display.canvas, e);
-            console.log(EventHandlers.cursor);
-            console.log(Display.canvas.width);
         };
 
         // Set up inputs
@@ -128,12 +84,6 @@ var EventHandlers = {
             Midi.song = val;
             Midi.get_song();
         }
-    },
-
-    key_down : function() {
-        for (i in this.keys) {
-            if(this.keys[i]) return this.keys[i]; }
-        return false;
     }
 }
 
@@ -177,10 +127,6 @@ var Midi = {
         console.log("nah");
         MIDI.Player.removeListener();
         MIDI.Player.stop();
-    },
-
-    // Shred it up
-    shred : function() {
     },
 
     update : function(data) {
@@ -235,17 +181,6 @@ var PerlmanProgress = {
     }
 }
 
-var Shredness = {
-    // Set up
-    init : function() {
-        this.collided_with = []
-    },
-
-    collide : function(note) {
-        console.log("shred");
-        Midi.shred();
-    }
-}
 
 var Collision = {
     update_collision(player, note) {
@@ -254,7 +189,7 @@ var Collision = {
                 player.x < note.x + note.width &&
                 player.y + player.height > note.y &&
                 player.y < note.y + note.height)
-            Shredness.collide(note);
+            return; // Idk what to do here
     }
 }
 
@@ -349,19 +284,6 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
-        /*if (EventHandlers.keys["down"])
-            Player.dy += 1;
-        if (EventHandlers.keys["up"])
-            Player.dy += -1;
-        if (EventHandlers.keys["left"])
-            Player.dx += -1;
-        if (EventHandlers.keys["right"])
-            Player.dx += 1;
-        if (!EventHandlers.key_down()) {
-            Player.dx = 0;
-            Player.dy = 0;
-        }*/
-
         Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
@@ -393,8 +315,9 @@ var Display = {
 
     // Clear canvas
     clear : function() {
-        this.i = 0;
-        this.context.fillStyle = "#000";
+        var percent_of_rgb = function(position, total) {
+            return parseInt(((total - position) / total) * 225);
+        }
         this.context.fillRect(0, 0, this.context.canvas.width,
                 this.context.canvas.height);
     }
