@@ -49,6 +49,17 @@ var EventHandlers = {
             }
         };
 
+        this.cursor = {
+            x: 0, 
+            y: 0
+        }
+
+        window.onmousemove = function(e) {
+            EventHandlers.cursor = MousePos(Display.canvas, e);
+            console.log(EventHandlers.cursor);
+            console.log(Display.canvas.width);
+        };
+
         // Set up inputs
         this.set_start_button();
         this.set_up_chooser();
@@ -178,7 +189,8 @@ var Midi = {
         Midi.message = data.message;
         if (Midi.message == 144) {
             var r = new Rect(Display.canvas.width - 50,
-                    (Display.canvas.height - (Midi.note * 5)), 500, 5)
+                    (Display.canvas.height - (Midi.note * 5)),
+                    Display.canvas.width, 5)
             r.pitch = Midi.note;
             Notes.current[Midi.note] = r;
             Rectangles.rectangles.push(r);
@@ -194,14 +206,16 @@ var Player = {
     // Set up player
     init : function() {
         this.rect = new Rect(10, 10, 25, 25);
-        this.dx = 0;
-        this.dy = 0;
+        //this.dx = 0;
+        //this.dy = 0;
     },
 
     // Update position
     update_position : function() {
-        this.rect.x += this.dx;
-        this.rect.y += this.dy;
+        //this.rect.x += this.dx;
+        //this.rect.y += this.dy;
+        this.rect.x = EventHandlers.cursor.x;
+        this.rect.y = EventHandlers.cursor.y;
     }
 }
 
@@ -244,6 +258,14 @@ var Collision = {
     }
 }
 
+function MousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    }
+}
+
 var Notes = {
     init : function() {
         this.current = []; 
@@ -253,23 +275,24 @@ var Notes = {
 var Rectangles = {
     init : function() {
         this.rectangles = [];
+        this.dx = -5;
     },
     update : function() {
-        var notfinished = true;
-        while(notfinished) {
-            notfinished = false;
-            for (i in this.rectangles) {
-                var r = this.rectangles[i]
-                if(r.x < -1 * r.width) {
-                    this.rectangles.splice(i, i + 1);
-                    notfinished = true;
-                    break;
-                }
-                else r.x += -1;
+        for (var i = this.rectangles.length - 1; i >= 0; i--) {
+            var r = this.rectangles[i]
+            if(r.x + r.width < -2000) {
+                this.rectangles.splice(i, i);
+                //console.log("delete");
             }
+            //else r.x += -5;
         }
     },
+    update_position : function() {
+        for(i in this.rectangles)
+            this.rectangles[i].x += this.dx;
+    },
     draw : function() {
+        //Rectangles.update_position();
         for (i in this.rectangles) {
             if(this.rectangles[i]) {
                 var r = this.rectangles[i];
@@ -326,7 +349,7 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
-        if (EventHandlers.keys["down"])
+        /*if (EventHandlers.keys["down"])
             Player.dy += 1;
         if (EventHandlers.keys["up"])
             Player.dy += -1;
@@ -337,13 +360,15 @@ var Display = {
         if (!EventHandlers.key_down()) {
             Player.dx = 0;
             Player.dy = 0;
-        }
+        }*/
+
         Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
-                Player.rect.width, Player.rect.height);
+        Player.rect.width, Player.rect.height);
         PerlmanProgress.update();
         Rectangles.update();
+        Rectangles.update_position();
         Rectangles.check_collisions();
         Rectangles.draw();
         Display.timer = window.requestAnimationFrame(Display.main_loop);
