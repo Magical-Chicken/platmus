@@ -199,9 +199,6 @@ var Shredness = {
     },
     collide : function() {
         this.shred += 1;
-        if (this.shred > 500) {
-            
-        }
         this.show();
     },
     show : function() {
