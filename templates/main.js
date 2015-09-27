@@ -102,7 +102,7 @@ var Midi = {
             soundfontUrl: "soundfonts/",
             instrument: "acoustic_grand_piano",
             onsuccess: function() {
-                MIDI.Player.loadFile("songs/song.mid", function() {
+                MIDI.Player.loadFile("songs/verdi_traviatta.mid", function() {
                     EventHandlers.enable_start_button();
                     console.log("hi");
                 },
