@@ -4,9 +4,46 @@ var EventHandlers = {
         // Element IDs
         this.start_button = document.getElementById("start_button");
 
-        // Set key handler
+        // Pressed keys
+        this.keys = {
+            "up": false,
+            "down": false,
+            "left": false,
+            "right": false
+        };
+
+        // Set key handlers
         document.onkeydown = function(event) {
-            Player.update_position(String.fromCharCode(event.keyCode));
+            switch (String.fromCharCode(event.keyCode)) {
+                case "K":
+                    EventHandlers.keys["up"] = true;
+                    break;
+                case "J":
+                    EventHandlers.keys["down"] = true;
+                    break;
+                case "H":
+                    EventHandlers.keys["left"] = true;
+                    break;
+                case "L":
+                    EventHandlers.keys["right"] = true;
+                    break;
+            }
+        }
+        document.onkeyup = function(event) {
+            switch (String.fromCharCode(event.keyCode)) {
+                case "K":
+                    EventHandlers.keys["up"] = false;
+                    break;
+                case "J":
+                    EventHandlers.keys["down"] = false;
+                    break;
+                case "H":
+                    EventHandlers.keys["left"] = false;
+                    break;
+                case "L":
+                    EventHandlers.keys["right"] = false;
+                    break;
+            }
         }
 
         // Set onclicks
@@ -40,6 +77,12 @@ var EventHandlers = {
         EventHandlers.set_start_button();
         Display.clear();
         Display.stop();
+    },
+
+    key_down : function() {
+        for (i in this.keys) {
+            if(this.keys[i]) return this.keys[i]; }
+        return false;
     }
 }
 
@@ -47,39 +90,38 @@ var Player = {
     // Set up player
     init : function() {
         this.rect = new Rect(10, 10, 25, 25);
+        this.dx = 0;
+        this.dy = 0;
     },
 
     // Update position
-    update_position : function(keycode) {
-        switch (keycode) {
-            case "J":
-                this.rect.y += 2;
-                break;
-            case "K":
-                this.rect.y -= 2;
-                break;
-            case "H":
-                this.rect.x -=2;
-                break;
-            case "L":
-                this.rect.x +=2;
-        }
+    update_position : function() {
+        this.rect.x += this.dx;
+        this.rect.y += this.dy;
     }
 }
 
-// var Collision = {
-//     // Set up collision
-//     init : function() {
-//     },
-// 
-//     update_collision(player, note) {
-//         
-//         //checks if player is above note
-//         if(player.x <
-//     }
-//         
-// 
-// }
+var Collision = {
+    // Set up collision
+    init : function() {
+    },
+
+    update_collision(player, note) {
+        
+        //checks if player is above note
+        if(player.x + player.width / 2 > note.x - note.width / 2 
+                && player.x - player.width / 2 < note.x + note.width / 2)
+            if(player.y + player.height / 2 > note.y - note.height / 2
+                    && player.y - player.height / 2 < note.y + note.height / 2)
+                console.log("collision true");
+            else
+                console.log("collision false");
+        else
+            console.log("collision false");
+    }
+        
+
+}
 
 function Rect(x, y, width, height) {
     this.x = x;
@@ -107,8 +149,23 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
+        if (EventHandlers.keys["down"])
+            Player.dy += 1;
+        if (EventHandlers.keys["up"])
+            Player.dy += -1;
+        if (EventHandlers.keys["left"])
+            Player.dx += -1;
+        if (EventHandlers.keys["right"])
+            Player.dx += 1;
+        if (!EventHandlers.key_down()) {
+            Player.dx = 0;
+            Player.dy = 0;
+        }
+        Collision.update_collision(Player.rect, new Rect(50, 50, 25,25));
+        Player.update_position();
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y, Player.rect.width, Player.rect.height);
+        Display.context.fillRect(50, 50, 25, 25);
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
@@ -121,6 +178,7 @@ var Display = {
     // Stop the simulation
     stop : function() {
         window.cancelAnimationFrame(this.timer);
+        Player.init();
     },
 
     // Clear canvas
