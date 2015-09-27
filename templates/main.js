@@ -119,6 +119,16 @@ var Midi = {
         console.log("bueno");
         this.playing = true;
         MIDI.Player.start();
+        MIDI.setEffects([
+            {
+                type: "Overdrive",
+                outputGain: 0.5,
+                drive: 0.7,
+                curveAmount: 0.85,
+                algorithmIndex: 0,
+                bypass: 0
+            }
+            ]);
         MIDI.Player.addListener(Midi.update);
     },
 
@@ -190,16 +200,7 @@ var Shredness = {
     collide : function() {
         this.shred += 1;
         if (this.shred > 500) {
-            MIDI.setEffects([
-            {
-                type: "Overdrive",
-                outputGain: 0.5,
-                drive: 0.3,
-                curveAmount: 0.6,
-                algorithmIndex: 0,
-                bypass: 0
-            }
-            ]);
+            
         }
         this.show();
     },
