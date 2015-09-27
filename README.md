@@ -13,4 +13,4 @@ http://rawgit.com/Magical-Chicken/platmus/master/index.html
 Acknowledgements
 ------
 Many thanks to the developers of the libraries used in this project:
-https://github.com/mudcube/MIDI.js
+[MIDI.js](https://github.com/mudcube/MIDI.js)
