@@ -177,7 +177,7 @@ var Midi = {
         Midi.message = data.message;
         if(Midi.message == 144) {
             var r = new Rect(Display.canvas.width - 50,
-                    (Display.canvas.height - (Midi.note * 5)), 500, 5)
+                    (Display.canvas.height - (Midi.note * 5)), Display.canvas.width, 5)
             Notes.current[Midi.note] = r;
             Rectangles.rectangles.push(r);
         }
@@ -249,23 +249,24 @@ var Notes = {
 var Rectangles = {
     init : function() {
         this.rectangles = [];
+        this.dx = -5;
     },
     update : function() {
-        var notfinished = true;
-        while(notfinished) {
-            notfinished = false;
-            for (i in this.rectangles) {
-                var r = this.rectangles[i]
-                if(r.x < -1 * r.width) {
-                    this.rectangles.splice(i, i + 1);
-                    notfinished = true;
-                    break;
-                }
-                else r.x += -1;
+        for (var i = this.rectangles.length - 1; i >= 0; i--) {
+            var r = this.rectangles[i]
+            if(r.x + r.width < -2000) {
+                this.rectangles.splice(i, i);
+                console.log("delete");
             }
+            //else r.x += -5;
         }
     },
+    update_position : function() {
+        for(i in this.rectangles)
+            this.rectangles[i].x += this.dx;
+    },
     draw : function() {
+        //Rectangles.update_position();
         for (i in this.rectangles) {
             if(this.rectangles[i]) {
                 var r = this.rectangles[i];
@@ -334,7 +335,9 @@ var Display = {
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
                 Player.rect.width, Player.rect.height);
+        
         Rectangles.update();
+        Rectangles.update_position();
         Rectangles.check_collisions();
         Rectangles.draw();
         Display.timer = window.requestAnimationFrame(Display.main_loop);
