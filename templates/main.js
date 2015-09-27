@@ -108,7 +108,7 @@ var Midi = {
             soundfontUrl: "soundfonts/",
             instrument: "acoustic_grand_piano",
             onsuccess: function() {
-                MIDI.Player.loadFile("songs/song.mid", function() {
+                MIDI.Player.loadFile("songs/fantaisie.mid", function() {
                     EventHandlers.enable_start_button();
                     console.log("hi");
                 },
@@ -126,12 +126,32 @@ var Midi = {
     start : function() {
         console.log("bueno");
         MIDI.Player.start();
+        MIDI.Player.addListener(Midi.update);
     },
 
     // Nooooooo
     stop : function() {
         console.log("nah");
         MIDI.Player.stop();
+        MIDI.Player.removeListener();
+    },
+
+    update : function(data) {
+        //console.log(data);
+        Midi.note = data.note;
+        Midi.message = data.message;
+        if(Midi.message == 144) {
+            var r = new Rect(Display.canvas.width - 50, (Display.canvas.height - (Midi.note * 5)), 500, 5)
+            Notes.current[Midi.note] = r;
+            Rectangles.rectangles.push(r);
+        }
+        else {
+            if(Notes.current[Midi.note]) {
+                var r = Notes.current[Midi.note];
+                r.width = Display.canvas.width - r.x;
+                Notes.current[Midi.note] = null;
+            }
+        }
     }
 }
 
@@ -172,6 +192,41 @@ var Collision = {
 
 }
 
+var Notes = {
+    init : function() {
+        this.current = []; 
+    }
+}
+
+var Rectangles = {
+    init : function() {
+        this.rectangles = [];
+    },
+    update : function() {
+        var notfinished = true;
+        while(notfinished) {
+            notfinished = false;
+            for (i in this.rectangles) {
+                var r = this.rectangles[i]
+                if(r.x < -1 * r.width) {
+                    this.rectangles.splice(i, i + 1);
+                    notfinished = true;
+                    break;
+                }
+                else r.x += -1;
+            }
+        }
+    },
+    draw : function() {
+        for (i in this.rectangles) {
+            if(this.rectangles[i]) {
+                var r = this.rectangles[i];
+                Display.context.fillRect(r.x, r.y, r.width, r.height);
+            }
+        }
+    }
+}
+
 function Rect(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -193,6 +248,12 @@ var Display = {
 
         //Set up midi
         Midi.init();
+
+        //Set up rects
+        Rectangles.init();
+
+        //Set up current notes
+        Notes.init();
 
         // Clear canvas
         this.clear();
@@ -218,6 +279,8 @@ var Display = {
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y, Player.rect.width, Player.rect.height);
         Display.context.fillRect(50, 50, 25, 25);
+        Rectangles.update();
+        Rectangles.draw();
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
@@ -233,6 +296,7 @@ var Display = {
         window.cancelAnimationFrame(this.timer);
         Midi.stop();
         Player.init();
+        Rectangles.rectangles = [];
     },
 
     // Clear canvas
