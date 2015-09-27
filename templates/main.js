@@ -176,7 +176,8 @@ var Midi = {
         Midi.note = data.note;
         Midi.message = data.message;
         if(Midi.message == 144) {
-            var r = new Rect(Display.canvas.width - 50, (Display.canvas.height - (Midi.note * 5)), 500, 5)
+            var r = new Rect(Display.canvas.width - 50,
+                    (Display.canvas.height - (Midi.note * 5)), 500, 5)
             Notes.current[Midi.note] = r;
             Rectangles.rectangles.push(r);
         }
@@ -231,11 +232,11 @@ var Shredness = {
 var Collision = {
     update_collision(player, note) {
         //checks if player is above note
-        if (player.x + player.width / 2 > note.x - note.width / 2 
-                && player.x - player.width / 2 < note.x + note.width / 2)
-            if (player.y + player.height / 2 > note.y - note.height / 2
-                    && player.y - player.height / 2 < note.y + note.height / 2)
-                Shredness.collide(note);
+        if (player.x + player.width > note.x &&
+                player.x < note.x + note.width &&
+                player.y + player.height > note.y &&
+                player.y < note.y + note.height)
+            Shredness.collide(note);
     }
 }
 
