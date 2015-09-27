@@ -1,10 +1,8 @@
-from flask import Flask, render_template
+# Flask server that does nothing so we can test
+
+from flask import Flask
 
 app = Flask(__name__)
-
-@app.route("/main.js")
-def thingy():
-    return render_template("main.js")
 
 if __name__ == "__main__":
     app.run(debug=True)
