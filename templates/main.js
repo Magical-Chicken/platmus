@@ -322,9 +322,10 @@ var Display = {
     main_loop: function() {
         Display.clear();
         Player.update_position();
-        Display.context.fillStyle = "#fff";
+        Display.context.fillStyle = "rgba(" + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) +                 ",1)";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
-        Player.rect.width, Player.rect.height);
+                Player.rect.width, Player.rect.height);
+        Display.context.fillStyle = "#fff";
         PerlmanProgress.update();
         Rectangles.update();
         Rectangles.update_position();
