@@ -206,26 +206,31 @@ var Player = {
     }
 }
 
+var PerlmanProgress = {
+    init : function() {
+        this.tw = window.innerWidth - 5;
+        this.perlman = document.getElementById("shreddedness_bar");
+        this.perlman.heigth = 0;
+        this.perlman.width = 0;
+    },
+
+    update : function() {
+        var time = MIDI.Player.currentTime;
+        var length = MIDI.Player.endTime;
+        var progress = time / length;
+        this.perlman.width = this.tw * progress;
+    }
+}
+
 var Shredness = {
     // Set up
     init : function() {
-        this.perlman = document.getElementById("shreddedness_bar");
-        this.perlman.height = 100;
-        this.perlman.width = 0;
         this.collided_with = []
     },
 
     collide : function(note) {
-        if (this.collided_with.indexOf(note) < 0) {
-            this.collided_with.push(note);
-            if (this.perlman.width < window.innerWidth)
-                this.perlman.width += 5;
-            else if (this.perlman.height < window.innerHeight)
-                this.perlman.height += 5;
-            else
-                EventHandlers.lose();
-            Midi.shred();
-        }
+        console.log("shred");
+        Midi.shred();
     }
 }
 
@@ -334,6 +339,7 @@ var Display = {
         Display.context.fillStyle = "#fff";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
                 Player.rect.width, Player.rect.height);
+        PerlmanProgress.update();
         Rectangles.update();
         Rectangles.check_collisions();
         Rectangles.draw();
@@ -343,6 +349,7 @@ var Display = {
     // Start the simulation
     start : function() {
         Shredness.init();
+        PerlmanProgress.init();
         Midi.start();
         this.clear();
         this.timer = window.requestAnimationFrame(Display.main_loop);
