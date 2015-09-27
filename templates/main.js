@@ -49,6 +49,17 @@ var EventHandlers = {
             }
         };
 
+        this.cursor = {
+            x: 0, 
+            y: 0
+        }
+
+        window.onmousemove = function(e) {
+            EventHandlers.cursor = MousePos(Display.canvas, e);
+            console.log(EventHandlers.cursor);
+            console.log(Display.canvas.width);
+        };
+
         // Set up inputs
         this.set_start_button();
         this.set_up_chooser();
@@ -195,14 +206,16 @@ var Player = {
     // Set up player
     init : function() {
         this.rect = new Rect(10, 10, 25, 25);
-        this.dx = 0;
-        this.dy = 0;
+        //this.dx = 0;
+        //this.dy = 0;
     },
 
     // Update position
     update_position : function() {
-        this.rect.x += this.dx;
-        this.rect.y += this.dy;
+        //this.rect.x += this.dx;
+        //this.rect.y += this.dy;
+        this.rect.x = EventHandlers.cursor.x;
+        this.rect.y = EventHandlers.cursor.y;
     }
 }
 
@@ -245,6 +258,14 @@ var Collision = {
     }
 }
 
+function MousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    }
+}
+
 var Notes = {
     init : function() {
         this.current = []; 
@@ -261,7 +282,7 @@ var Rectangles = {
             var r = this.rectangles[i]
             if(r.x + r.width < -2000) {
                 this.rectangles.splice(i, i);
-                console.log("delete");
+                //console.log("delete");
             }
             //else r.x += -5;
         }
