@@ -97,7 +97,7 @@ var EventHandlers = {
 
     set_up_chooser : function() {
         var options = "<option>Choose</option>";
-        var songs_array = ["song.mid", "fantaisie.mid"];
+        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid"];
         for (i in songs_array) {
             options += "<option>" + songs_array[i] + "</option>";
         }
@@ -131,6 +131,7 @@ var Midi = {
     init : function() {
         this.song = "song.mid";
         this.playing = false;
+        this.colorMap = MIDI.Synesthesia.map();
         console.log("get soundfont");
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
@@ -175,18 +176,16 @@ var Midi = {
         //console.log(data);
         Midi.note = data.note;
         Midi.message = data.message;
-        if(Midi.message == 144) {
+        if (Midi.message == 144) {
             var r = new Rect(Display.canvas.width - 50,
                     (Display.canvas.height - (Midi.note * 5)), 500, 5)
+            r.pitch = Midi.note;
             Notes.current[Midi.note] = r;
             Rectangles.rectangles.push(r);
-        }
-        else {
-            if(Notes.current[Midi.note]) {
+        } else if (Notes.current[Midi.note]) {
                 var r = Notes.current[Midi.note];
                 r.width = Display.canvas.width - r.x;
                 Notes.current[Midi.note] = null;
-            }
         }
     }
 }
@@ -274,6 +273,9 @@ var Rectangles = {
         for (i in this.rectangles) {
             if(this.rectangles[i]) {
                 var r = this.rectangles[i];
+                try {
+                    Display.context.fillStyle = Midi.colorMap[r.pitch].hex;
+                } catch (e) { }
                 Display.context.fillRect(r.x, r.y, r.width, r.height);
             }
         }
@@ -290,6 +292,7 @@ function Rect(x, y, width, height) {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.pitch = null;
 }
 
 var Display = {
