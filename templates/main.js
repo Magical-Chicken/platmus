@@ -181,6 +181,35 @@ var PerlmanProgress = {
     }
 }
 
+var Shredness = {
+    init : function() {
+        this.shred = 0;
+        this.span = document.getElementById("shred_no");
+        this.show();
+    },
+    collide : function() {
+        this.shred += 1;
+        if (this.shred > 500) {
+            MIDI.setEffects([
+            {
+                type: "Overdrive",
+                outputGain: 0.5,
+                drive: 0.7,
+                curveAmount: 1,
+                algorithmIndex: 0,
+                bypass: 0
+            }
+            ]);
+        }
+        this.show();
+    },
+    show : function() {
+        if (this.shred > 500)
+            this.span.innerHTML = "SHRED LEVEL: " + this.shred + "SHREDDED";
+        else
+            this.span.innerHTML = "SHRED LEVEL: " + this.shred;
+    }
+}
 
 var Collision = {
     update_collision(player, note) {
@@ -189,7 +218,7 @@ var Collision = {
                 player.x < note.x + note.width &&
                 player.y + player.height > note.y &&
                 player.y < note.y + note.height)
-            return; // Idk what to do here
+            Shredness.collide(); // Idk what to do here
     }
 }
 
