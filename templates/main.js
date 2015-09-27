@@ -64,7 +64,7 @@ var EventHandlers = {
 
     set_up_chooser : function() {
         var options = "<option>Choose</option>";
-        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid"];
+        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid"];
         for (i in songs_array) {
             options += "<option>" + songs_array[i] + "</option>";
         }
