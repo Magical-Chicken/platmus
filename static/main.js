@@ -132,16 +132,50 @@ var Midi = {
         console.log("bueno");
         this.playing = true;
         MIDI.Player.start();
-        MIDI.setEffects([
-            {
-                type: "Overdrive",
-                outputGain: 0.5,
-                drive: 0.7,
-                curveAmount: 0.85,
-                algorithmIndex: 0,
-                bypass: 0
-            }
-            ]);
+        var filter = null;
+        switch (document.getElementById("filter_select").value) {
+            case "Overdrive":
+                filter = {
+                    type: "Overdrive",
+                    outputGain: 0.5,
+                    drive: 0.7,
+                    curveAmount: 0.85,
+                    algorithmIndex: 0,
+                    bypass: 0
+                };
+                break;
+            case "Phaser":
+                filter = {
+                    type: "Phaser",
+                    rate: 1.2,
+                    depth: 0.3,
+                    feedback: 0.2,
+                    stereoPhase: 30,
+                    baseModulationFrequency: 700,
+                    bypass: 0
+                };
+                break;
+            case "Bitcrusher":
+                filter = {
+                    type: "Bitcrusher",
+                    bits: 4,
+                    bufferSize: 4096,
+                    bypass: false,
+                    normfreq: 1.0
+                };
+                break;
+            case "MoogFilter":
+                filter = {
+                    type: "MoogFilter",
+                    bufferSize: 4096,
+                    bypass: false,
+                    cutoff: 0.065,
+                    resonance: 3.5
+                };
+                break;
+        }
+        if (filter != null)
+            MIDI.setEffects([filter]);
         MIDI.Player.addListener(Midi.update);
     },
 
