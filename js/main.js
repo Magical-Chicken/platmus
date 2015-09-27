@@ -46,26 +46,46 @@ var EventHandlers = {
 var Player = {
     // Set up player
     init : function() {
-        this.x = 10;
-        this.y = 10;
+        this.rect = new Rect(10, 10, 25, 25);
     },
 
     // Update position
     update_position : function(keycode) {
         switch (keycode) {
             case "J":
-                this.y += 2;
+                this.rect.y += 2;
                 break;
             case "K":
-                this.y -= 2;
+                this.rect.y -= 2;
                 break;
             case "H":
-                this.x -=2;
+                this.rect.x -=2;
                 break;
             case "L":
-                this.x +=2;
+                this.rect.x +=2;
         }
     }
+}
+
+// var Collision = {
+//     // Set up collision
+//     init : function() {
+//     },
+// 
+//     update_collision(player, note) {
+//         
+//         //checks if player is above note
+//         if(player.x <
+//     }
+//         
+// 
+// }
+
+function Rect(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
 }
 
 var Display = {
@@ -88,7 +108,7 @@ var Display = {
     main_loop: function() {
         Display.clear();
         Display.context.fillStyle = "#fff";
-        Display.context.fillRect(Player.x, Player.y, 25, 25);
+        Display.context.fillRect(Player.rect.x, Player.rect.y, Player.rect.width, Player.rect.height);
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
