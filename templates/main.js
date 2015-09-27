@@ -5,48 +5,15 @@ var EventHandlers = {
         this.start_button = document.getElementById("start_button");
         this.loading_sign = document.getElementById("loading_sign");
         this.midiselectionator = document.getElementById("midi_selectionator");
+        this.background = document.body;
 
-        // Pressed keys
-        this.keys = {
-            "up": false,
-            "down": false,
-            "left": false,
-            "right": false
+        this.cursor = {
+            x: 0, 
+            y: 0
         };
 
-        // Set key handlers
-        document.onkeydown = function(event) {
-            switch (String.fromCharCode(event.keyCode)) {
-                case "K":
-                    EventHandlers.keys["up"] = true;
-                    break;
-                case "J":
-                    EventHandlers.keys["down"] = true;
-                    break;
-                case "H":
-                    EventHandlers.keys["left"] = true;
-                    break;
-                case "L":
-                    EventHandlers.keys["right"] = true;
-                    break;
-            }
-        };
-
-        document.onkeyup = function(event) {
-            switch (String.fromCharCode(event.keyCode)) {
-                case "K":
-                    EventHandlers.keys["up"] = false;
-                    break;
-                case "J":
-                    EventHandlers.keys["down"] = false;
-                    break;
-                case "H":
-                    EventHandlers.keys["left"] = false;
-                    break;
-                case "L":
-                    EventHandlers.keys["right"] = false;
-                    break;
-            }
+        window.onmousemove = function(e) {
+            EventHandlers.cursor = MousePos(Display.canvas, e);
         };
 
         // Set up inputs
@@ -97,7 +64,7 @@ var EventHandlers = {
 
     set_up_chooser : function() {
         var options = "<option>Choose</option>";
-        var songs_array = ["song.mid", "fantaisie.mid"];
+        var songs_array = ["song.mid", "fantaisie.mid", "jbel.mid", "deathwaltz.mid"];
         for (i in songs_array) {
             options += "<option>" + songs_array[i] + "</option>";
         }
@@ -117,12 +84,6 @@ var EventHandlers = {
             Midi.song = val;
             Midi.get_song();
         }
-    },
-
-    key_down : function() {
-        for (i in this.keys) {
-            if(this.keys[i]) return this.keys[i]; }
-        return false;
     }
 }
 
@@ -131,6 +92,7 @@ var Midi = {
     init : function() {
         this.song = "song.mid";
         this.playing = false;
+        this.colorMap = MIDI.Synesthesia.map();
         console.log("get soundfont");
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
@@ -157,6 +119,16 @@ var Midi = {
         console.log("bueno");
         this.playing = true;
         MIDI.Player.start();
+        MIDI.setEffects([
+            {
+                type: "Overdrive",
+                outputGain: 0.5,
+                drive: 0.7,
+                curveAmount: 0.85,
+                algorithmIndex: 0,
+                bypass: 0
+            }
+            ]);
         MIDI.Player.addListener(Midi.update);
     },
 
@@ -167,26 +139,21 @@ var Midi = {
         MIDI.Player.stop();
     },
 
-    // Shred it up
-    shred : function() {
-    },
-
     update : function(data) {
         //console.log(data);
         Midi.note = data.note;
         Midi.message = data.message;
-        if(Midi.message == 144) {
+        if (Midi.message == 144) {
             var r = new Rect(Display.canvas.width - 50,
-                    (Display.canvas.height - (Midi.note * 5)), 500, 5)
+                    (Display.canvas.height - (Midi.note * 5)),
+                    Display.canvas.width, 5)
+            r.pitch = Midi.note;
             Notes.current[Midi.note] = r;
             Rectangles.rectangles.push(r);
-        }
-        else {
-            if(Notes.current[Midi.note]) {
+        } else if (Notes.current[Midi.note]) {
                 var r = Notes.current[Midi.note];
                 r.width = Display.canvas.width - r.x;
                 Notes.current[Midi.note] = null;
-            }
         }
     }
 }
@@ -195,37 +162,50 @@ var Player = {
     // Set up player
     init : function() {
         this.rect = new Rect(10, 10, 25, 25);
-        this.dx = 0;
-        this.dy = 0;
+        //this.dx = 0;
+        //this.dy = 0;
     },
 
     // Update position
     update_position : function() {
-        this.rect.x += this.dx;
-        this.rect.y += this.dy;
+        //this.rect.x += this.dx;
+        //this.rect.y += this.dy;
+        this.rect.x = EventHandlers.cursor.x;
+        this.rect.y = EventHandlers.cursor.y;
+    }
+}
+
+var PerlmanProgress = {
+    init : function() {
+        this.tw = window.innerWidth - 5;
+        this.perlman = document.getElementById("shreddedness_bar");
+        this.perlman.heigth = 0;
+        this.perlman.width = 0;
+    },
+
+    update : function() {
+        var time = MIDI.Player.currentTime;
+        var length = MIDI.Player.endTime;
+        var progress = time / length;
+        this.perlman.width = this.tw * progress;
     }
 }
 
 var Shredness = {
-    // Set up
     init : function() {
-        this.perlman = document.getElementById("shreddedness_bar");
-        this.perlman.height = 100;
-        this.perlman.width = 0;
-        this.collided_with = []
+        this.shred = 0;
+        this.span = document.getElementById("shred_no");
+        this.show();
     },
-
-    collide : function(note) {
-        if (this.collided_with.indexOf(note) < 0) {
-            this.collided_with.push(note);
-            if (this.perlman.width < window.innerWidth)
-                this.perlman.width += 5;
-            else if (this.perlman.height < window.innerHeight)
-                this.perlman.height += 5;
-            else
-                EventHandlers.lose();
-            Midi.shred();
-        }
+    collide : function() {
+        this.shred += 1;
+        this.show();
+    },
+    show : function() {
+        if (this.shred > 500)
+            this.span.innerHTML = "SHRED LEVEL: " + this.shred + "SHREDDED";
+        else
+            this.span.innerHTML = "SHRED LEVEL: " + this.shred;
     }
 }
 
@@ -236,7 +216,15 @@ var Collision = {
                 player.x < note.x + note.width &&
                 player.y + player.height > note.y &&
                 player.y < note.y + note.height)
-            Shredness.collide(note);
+            Shredness.collide(); // Idk what to do here
+    }
+}
+
+function MousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
     }
 }
 
@@ -249,26 +237,30 @@ var Notes = {
 var Rectangles = {
     init : function() {
         this.rectangles = [];
+        this.dx = -5;
     },
     update : function() {
-        var notfinished = true;
-        while(notfinished) {
-            notfinished = false;
-            for (i in this.rectangles) {
-                var r = this.rectangles[i]
-                if(r.x < -1 * r.width) {
-                    this.rectangles.splice(i, i + 1);
-                    notfinished = true;
-                    break;
-                }
-                else r.x += -1;
+        for (var i = this.rectangles.length - 1; i >= 0; i--) {
+            var r = this.rectangles[i]
+            if(r.x + r.width < -2000) {
+                this.rectangles.splice(i, i);
+                //console.log("delete");
             }
+            //else r.x += -5;
         }
     },
+    update_position : function() {
+        for(i in this.rectangles)
+            this.rectangles[i].x += this.dx;
+    },
     draw : function() {
+        //Rectangles.update_position();
         for (i in this.rectangles) {
             if(this.rectangles[i]) {
                 var r = this.rectangles[i];
+                try {
+                    Display.context.fillStyle = Midi.colorMap[r.pitch].hex;
+                } catch (e) { }
                 Display.context.fillRect(r.x, r.y, r.width, r.height);
             }
         }
@@ -285,6 +277,7 @@ function Rect(x, y, width, height) {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.pitch = null;
 }
 
 var Display = {
@@ -318,24 +311,14 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
-        if (EventHandlers.keys["down"])
-            Player.dy += 1;
-        if (EventHandlers.keys["up"])
-            Player.dy += -1;
-        if (EventHandlers.keys["left"])
-            Player.dx += -1;
-        if (EventHandlers.keys["right"])
-            Player.dx += 1;
-        if (!EventHandlers.key_down()) {
-            Player.dx = 0;
-            Player.dy = 0;
-        }
         Player.update_position();
         Display.context.fillStyle = "rgba(" + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) +                 ",1)";
         Display.context.fillRect(Player.rect.x, Player.rect.y,
                 Player.rect.width, Player.rect.height);
         Display.context.fillStyle = "#fff";
+        PerlmanProgress.update();
         Rectangles.update();
+        Rectangles.update_position();
         Rectangles.check_collisions();
         Rectangles.draw();
         Display.timer = window.requestAnimationFrame(Display.main_loop);
@@ -344,6 +327,7 @@ var Display = {
     // Start the simulation
     start : function() {
         Shredness.init();
+        PerlmanProgress.init();
         Midi.start();
         this.clear();
         this.timer = window.requestAnimationFrame(Display.main_loop);
@@ -359,8 +343,9 @@ var Display = {
 
     // Clear canvas
     clear : function() {
-        this.i = 0;
-        this.context.fillStyle = "#000";
+        var percent_of_rgb = function(position, total) {
+            return parseInt(((total - position) / total) * 225);
+        }
         this.context.fillRect(0, 0, this.context.canvas.width,
                 this.context.canvas.height);
     }

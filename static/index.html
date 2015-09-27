@@ -13,7 +13,6 @@
     <script src="midi/plugin.webaudio.js"></script>
     <script src="midi/plugin.webmidi.js"></script>
     <script src="midi/synesthesia.js"></script>
-    <script src="midi/synesthesia.js"></script>
     <script src="midi/Base64.js"></script>
     <script src="midi/Base64binary.js"></script>
     <script src="midi/WebAudioAPI.js"></script>
@@ -23,22 +22,25 @@
     <script src="midi/midifile.js"></script>
     <script src="midi/replayer.js"></script>
     <script src="midi/stream.js"></script>
+    <script src="midi/tuna.js"></script>
+    <script src="midi/colorspace.js"></script>
     <script src="../main.js"></script>
 </head>
 <body>
-    <!--<div id="titlebar">-->
-    <!--<h1>Platform Music</h1>-->
-    <!--</div>-->
     <canvas id="main_canvas"></canvas>
     <div id="controls">
         <b>Choose File:</b>
         <select id="midi_selectionator" disabled>
             <option>Choose</option>
         </select>
-        <b id="loading_sign"></b>
         <b>Start:</b><button id="start_button" disabled></button>
+        <b id="loading_sign"></b>
+        <span id="shred_no"></span>
     </div>
-    <img id="shreddedness_bar" src="images/perlman.jpg"></img>
+    <div id="shred_div">
+        <img id="shreddedness_bar" src="images/perlman.jpg" width="0"
+            height="100">
+    </div>
     <script type="text/javascript">
         EventHandlers.init();
         Display.init();
