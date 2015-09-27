@@ -77,27 +77,57 @@ var EventHandlers = {
         EventHandlers.set_start_button();
         Display.clear();
         Display.stop();
+    },
+
+    key_down : function() {
+        for (i in this.keys) {
+            if(this.keys[i]) return this.keys[i]; }
+        return false;
     }
 }
 
 var Player = {
     // Set up player
     init : function() {
-        this.x = 10;
-        this.y = 10;
+        this.rect = new Rect(10, 10, 25, 25);
+        this.dx = 0;
+        this.dy = 0;
     },
 
     // Update position
     update_position : function() {
-        if (EventHandlers.keys["down"])
-            this.y += 2;
-        if (EventHandlers.keys["up"])
-            this.y -= 2;
-        if (EventHandlers.keys["left"])
-            this.x -= 2;
-        if (EventHandlers.keys["right"])
-            this.x += 2;
+        this.rect.x += this.dx;
+        this.rect.y += this.dy;
     }
+}
+
+var Collision = {
+    // Set up collision
+    init : function() {
+    },
+
+    update_collision(player, note) {
+        
+        //checks if player is above note
+        if(player.x + player.width / 2 > note.x - note.width / 2 
+                && player.x - player.width / 2 < note.x + note.width / 2)
+            if(player.y + player.height / 2 > note.y - note.height / 2
+                    && player.y - player.height / 2 < note.y + note.height / 2)
+                console.log("collision true");
+            else
+                console.log("collision false");
+        else
+            console.log("collision false");
+    }
+        
+
+}
+
+function Rect(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
 }
 
 var Display = {
@@ -119,9 +149,23 @@ var Display = {
     // Main event loop
     main_loop: function() {
         Display.clear();
+        if (EventHandlers.keys["down"])
+            Player.dy += 1;
+        if (EventHandlers.keys["up"])
+            Player.dy += -1;
+        if (EventHandlers.keys["left"])
+            Player.dx += -1;
+        if (EventHandlers.keys["right"])
+            Player.dx += 1;
+        if (!EventHandlers.key_down()) {
+            Player.dx = 0;
+            Player.dy = 0;
+        }
+        Collision.update_collision(Player.rect, new Rect(50, 50, 25,25));
         Player.update_position();
         Display.context.fillStyle = "#fff";
-        Display.context.fillRect(Player.x, Player.y, 25, 25);
+        Display.context.fillRect(Player.rect.x, Player.rect.y, Player.rect.width, Player.rect.height);
+        Display.context.fillRect(50, 50, 25, 25);
         Display.timer = window.requestAnimationFrame(Display.main_loop);
     },
 
@@ -134,6 +178,7 @@ var Display = {
     // Stop the simulation
     stop : function() {
         window.cancelAnimationFrame(this.timer);
+        Player.init();
     },
 
     // Clear canvas
