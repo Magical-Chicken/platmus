@@ -105,6 +105,10 @@ var EventHandlers = {
         this.midiselectionator.onchange = EventHandlers.select_onchange;
     },
 
+    enable_chooser : function() {
+        this.midiselectionator.disabled = false;
+    },
+
     select_onchange : function() {
         if (Midi.playing)
             EventHandlers.stop_onclick();
@@ -127,28 +131,24 @@ var Midi = {
     init : function() {
         this.song = "song.mid";
         this.playing = false;
-    },
-
-    // Get the player ready
-    get_song : function() {
-        EventHandlers.disable_start_button();
         console.log("get soundfont");
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
             instrument: "acoustic_grand_piano",
             onsuccess: function() {
-                console.log(" get song");
-                MIDI.Player.loadFile("songs/" + Midi.song, function() {
-                    EventHandlers.enable_start_button();
-                    console.log("hi");
-                },
-                function(progress) {
-                    console.log(progress);
-                },
-                function(error) {
-                    console.log(error);
-                });
+                console.log(" got soundfont");
+                EventHandlers.enable_chooser();
             }
+        });
+    },
+
+    // Get the player ready
+    get_song : function() {
+        EventHandlers.disable_start_button();
+        console.log("get song");
+        MIDI.Player.loadFile("songs/" + Midi.song, function() {
+            EventHandlers.enable_start_button();
+            console.log(" got song");
         });
     },
 
@@ -191,11 +191,14 @@ var Player = {
 var Shredness = {
     // Set up
     init : function() {
-        this.shreddedness = 0;
+        this.shreddedness = 10;
+        this.perlman = document.getElementById("shreddedness_bar");
+        this.perlman.width = this.shreddedness;
     },
 
     collide : function() {
-        this.shreddedness += 10;
+        this.shreddedness += 50;
+        this.perlman.width = this.shreddedness;
         Midi.shred();
     }
 }
@@ -237,6 +240,9 @@ var Display = {
         //Set up midi
         Midi.init();
 
+        // Shred some stuff
+        Shredness.init();
+
         // Clear canvas
         this.clear();
     },
@@ -277,6 +283,7 @@ var Display = {
         window.cancelAnimationFrame(this.timer);
         Midi.stop();
         Player.init();
+        Shredness.init();
     },
 
     // Clear canvas

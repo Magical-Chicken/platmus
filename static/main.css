@@ -6,7 +6,7 @@ body {
 
 div#titlebar {
     text-align: center;
-    height: 100px;
+    height: 70px;
 }
 
 div#controls {
@@ -18,4 +18,9 @@ div#controls {
 canvas {
     background-color: #fff;
     margin-left: 25px;
+}
+
+img#shreddedness_bar {
+    width: 0px;
+    height: 100px;
 }
