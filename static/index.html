@@ -32,9 +32,12 @@
     </div>
     <canvas id="main_canvas"></canvas>
     <div id="controls">
-        <b>Controls:</b>
-        <button id="start_button"></button>
+        <b>Choose File:</b>
+        <select id="midi_selectionator">
+            <option>Choose</option>
+        </select>
         <b id="loading_sign"></b>
+        <b>Start:</b><button id="start_button" disabled></button>
     </div>
     <script type="text/javascript">
         EventHandlers.init();

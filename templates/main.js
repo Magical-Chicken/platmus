@@ -4,6 +4,7 @@ var EventHandlers = {
         // Element IDs
         this.start_button = document.getElementById("start_button");
         this.loading_sign = document.getElementById("loading_sign");
+        this.midiselectionator = document.getElementById("midi_selectionator");
 
         // Pressed keys
         this.keys = {
@@ -48,8 +49,9 @@ var EventHandlers = {
             }
         };
 
-        // Set up buttons
+        // Set up inputs
         this.set_start_button();
+        this.set_up_chooser();
     },
 
     // Make the start button into a start button
@@ -93,6 +95,26 @@ var EventHandlers = {
         Display.stop();
     },
 
+    set_up_chooser : function() {
+        var options = "<option>Choose</option>";
+        var songs_array = ["song.mid", "fantaisie.mid"];
+        for (i in songs_array) {
+            options += "<option>" + songs_array[i] + "</option>";
+        }
+        this.midiselectionator.innerHTML = options;
+        this.midiselectionator.onchange = EventHandlers.select_onchange;
+    },
+
+    select_onchange : function() {
+        if (Midi.playing)
+            EventHandlers.stop_onclick();
+        var val = EventHandlers.midiselectionator.value
+        if (val != "Choose") {
+            Midi.song = val;
+            Midi.get_song();
+        }
+    },
+
     key_down : function() {
         for (i in this.keys) {
             if(this.keys[i]) return this.keys[i]; }
@@ -103,12 +125,20 @@ var EventHandlers = {
 var Midi = {
     //setup midi player
     init : function() {
+        this.song = "song.mid";
+        this.playing = false;
+    },
+
+    // Get the player ready
+    get_song : function() {
         EventHandlers.disable_start_button();
+        console.log("get soundfont");
         MIDI.loadPlugin({
             soundfontUrl: "soundfonts/",
             instrument: "acoustic_grand_piano",
             onsuccess: function() {
-                MIDI.Player.loadFile("songs/song.mid", function() {
+                console.log(" get song");
+                MIDI.Player.loadFile("songs/" + Midi.song, function() {
                     EventHandlers.enable_start_button();
                     console.log("hi");
                 },
@@ -125,12 +155,14 @@ var Midi = {
     // Start dis up
     start : function() {
         console.log("bueno");
+        this.playing = true;
         MIDI.Player.start();
     },
 
     // Nooooooo
     stop : function() {
         console.log("nah");
+        this.playing = false;
         MIDI.Player.stop();
     },
 
@@ -181,8 +213,6 @@ var Collision = {
                     && player.y - player.height / 2 < note.y + note.height / 2)
                 Shredness.collide();
     }
-        
-
 }
 
 function Rect(x, y, width, height) {
