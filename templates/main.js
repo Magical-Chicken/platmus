@@ -287,6 +287,15 @@ function Rect(x, y, width, height) {
     this.height = height;
 }
 
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 var Display = {
     // Set up simulation
     init : function() {
@@ -331,9 +340,12 @@ var Display = {
             Player.dy = 0;
         }
         Player.update_position();
-        Display.context.fillStyle = "#fff";
+        Display.context.fillStyle = "rgba(" + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) + ", " + parseInt(Math.random() * 255) + ", 1)"; 
+
         Display.context.fillRect(Player.rect.x, Player.rect.y,
                 Player.rect.width, Player.rect.height);
+        
+        Display.context.fillStyle = "#fff";
         Rectangles.update();
         Rectangles.check_collisions();
         Rectangles.draw();
