@@ -173,7 +173,17 @@ var Midi = {
                     resonance: 3.5
                 };
                 break;
+            case "Tremolo":
+                filter = {
+                    type: "Tremolo",
+                    intensity: 0.3, // 0 to 1
+                    rate: 0.1, // 0.001 to 8
+                    stereoPhase: 0, // 0 to 180
+                    bypass: 0
+                };
+                break;
         }
+
         if (filter != null)
             MIDI.setEffects([filter]);
         MIDI.Player.addListener(Midi.update);
